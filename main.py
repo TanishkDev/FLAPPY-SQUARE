@@ -8,7 +8,7 @@ def createPipe():
 
 def movePipe(pipes):
     for pipe in pipes:
-        pipe.centerx -= 5
+        pipe.centerx -= 12
     return pipes
 
 def drawPipe():
@@ -19,11 +19,12 @@ def drawPipe():
             flip_pipe = pygame.transform.flip(pipe_img, False, True)
             screen.blit(flip_pipe, pipe)
 
-def removePipe():
-    for pipe in pipe_list:
-        if pipe.centerx <= -300:
-            pipe_list.remove(pipe)
-    
+def removePipe(pipes):
+    for pipe in pipes:
+        if pipe.centerx <= -50:
+            pipes.remove(pipe)
+    return pipes
+
 def checkCollision():
     for pipe in pipe_list:
         if square.colliderect(pipe):
@@ -36,7 +37,7 @@ def draw():
     screen.blit(background, (0,0))
     screen.blit(square_img, square)
     drawPipe()
-    pygame.display.update()
+
 
 pygame.init()
 
@@ -49,17 +50,20 @@ pygame.display.set_caption("FULLMETAL SQUARE")
 
 clock = pygame.time.Clock()
 
+game_active = True
+
 background = pygame.image.load("assests/images/background.png")
 background = pygame.transform.scale(background,(WIDTH,HEIGHT))
 
-square_img = pygame.image.load("assests/images/square128.png")
+square_img = pygame.image.load("assests/images/square.png")
+square_img = pygame.transform.scale(square_img,(80,80))
 square = square_img.get_rect(center = (70,400))
 
 pipe_img = pygame.image.load("assests/images/pipe.png")
 pipe_img = pygame.transform.scale(pipe_img, (150,700))
 pipe_list = []
 
-pygame.time.set_timer(SWAPPIPE, (2100))
+pygame.time.set_timer(SWAPPIPE, (1800))
 
 
 while True:
@@ -74,14 +78,18 @@ while True:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_UP]:
-        square.centery -= 7
+        square.centery -= 8
     if keys[pygame.K_DOWN]:
-        square.centery += 7  
+        square.centery += 8  
 
+    
     pipe_list = movePipe(pipe_list)
-    removePipe()
-    checkCollision()
+    pipe_list = removePipe(pipe_list)
+    game_active = checkCollision()
     draw()
-    clock.tick(120)
+
+
+    pygame.display.flip()
+    clock.tick()
 
 
