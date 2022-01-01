@@ -35,8 +35,10 @@ def removePipe(pipes):
 def checkCollision():
     for pipe in pipe_list:
         if square.colliderect(pipe):
+            hitSound.play()
             return False
     if square.bottom >= 900 or square.top <= -100:
+        hitSound.play()
         return False
     return True
 
@@ -76,6 +78,7 @@ def score_display(gamestate, fontSize=30):
 
 pygame.init()
 pygame.font.init()
+pygame.mixer.pre_init(44100, 16, 2, 4096)
 
 SWAPPIPE = pygame.USEREVENT
 UPDATESCORE = pygame.USEREVENT
@@ -91,6 +94,10 @@ clock = pygame.time.Clock()
 game_active = True
 score = 0
 
+pygame.mixer.music.load("assests/sound/game.wav")
+hitSound = pygame.mixer.Sound("assests/sound/hit.wav")
+restartSound = pygame.mixer.Sound("assests/sound/restart.wav")
+
 background = pygame.image.load("assests/images/background.png")
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
@@ -103,7 +110,7 @@ pipe_img = pygame.image.load("assests/images/pipe.png")
 pipe_img = pygame.transform.scale(pipe_img, (150, 700))
 pipe_list = []
 
-pygame.time.set_timer(SWAPPIPE, (1500))
+pygame.time.set_timer(SWAPPIPE, (1200))
 pygame.time.set_timer(UPDATESCORE, (2200))
 
 while True:
@@ -131,6 +138,7 @@ while True:
             pipe_list.clear()
             game_active = True
             score = 0
+            restartSound.play()
 
     if game_active:
 
@@ -143,5 +151,6 @@ while True:
         screen.blit(background, (0, 0))
         score_display(2)
 
+    pygame.mixer.music.play()
     pygame.display.flip()
     clock.tick()
